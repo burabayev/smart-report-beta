@@ -1,0 +1,68 @@
+server:
+  port: 8080   # HTTP нам пока не нужен
+
+tcp:
+  host: 0.0.0.0
+  port: 9000           # сюда подключается RD07
+  sendUtcOnConnect: true
+  logHex: true
+  wireLog: true
+
+ingest:
+  inMemory:
+    perDeviceLimit: 1000      # хранить по 1000 последних точек на устройство
+    rawFramesLimit: 500       # сырые кадры для /debug/raw
+    globalDeviceLimit: 100000 # защитный максимум (кол-во устройств)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,prometheus"
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: "always"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    client-id: smart-report-beta
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        # без type headers, чтобы сообщение было «чистым» JSON
+        spring.json.add.type.headers: false
+    consumer:
+      group-id: smart-report-beta-writer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "kz.smart.smartreportbeta.*"
+        spring.json.value.default.type: kz.smart.smartreportbeta.events.ReadingEvent
+        spring.json.use.type.headers: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:55432/smartreport
+    username: smart
+    password: smartpass
+
+  sql:
+    init:
+      mode: always   # выполним schema.sql на старте (под нашим пользователем)
+
+kafka:
+  topics:
+    parsed-readings: parsed-readings
+    gateway-heartbeats: gateway-heartbeats
+
+#  Сколько секунд считать устройство «онлайн» после последнего события.
+#  * По умолчанию 10 минут
+inventory:
+  onlineThresholdSeconds: 600

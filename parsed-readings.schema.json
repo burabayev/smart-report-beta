@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:smart-report-beta:parsed-readings:1-0-0",
+  "title": "ParsedReadingEvent",
+  "type": "object",
+  "required": [
+    "deviceId",
+    "sensorTs",
+    "ingestTs",
+    "gatewayImei",
+    "type"
+  ],
+  "properties": {
+    "deviceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "gatewayImei": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 32
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "TAG_07_08_08B_08L_09",
+        "TAG_08B_DECIPERCENT"
+      ]
+    },
+    "sensorTs": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC"
+    },
+    "ingestTs": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC"
+    },
+    "temperatureC": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "humidityPercent": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "batteryV": {
+      "type": "number"
+    },
+    "rssiDbm": {
+      "type": "integer"
+    }
+  },
+  "additionalProperties": false
+}
