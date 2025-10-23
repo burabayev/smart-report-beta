@@ -61,6 +61,9 @@ kafka:
   topics:
     parsed-readings: parsed-readings
     gateway-heartbeats: gateway-heartbeats
+  consumer:
+    groups:
+      inventory: smart-report-beta-inventory
 
 #  Сколько секунд считать устройство «онлайн» после последнего события.
 #  * По умолчанию 10 минут
