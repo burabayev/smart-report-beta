@@ -6,25 +6,22 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DeviceStateRefresher {
-
+public class GatewayStateRefresher {
     private final JdbcTemplate jdbc;
     private final int onlineThresholdSeconds;
 
-    public DeviceStateRefresher(
-            JdbcTemplate jdbc,
-            @Value("${inventory.onlineThresholdSeconds:600}") int onlineThresholdSeconds
-    ) {
+    public GatewayStateRefresher(JdbcTemplate jdbc, @Value("${inventory.onlineThresholdSeconds:600}") int onlineThresholdSeconds) {
         this.jdbc = jdbc;
         this.onlineThresholdSeconds = onlineThresholdSeconds;
     }
 
-    @Scheduled(fixedDelayString = "PT30S", initialDelayString = "PT15S")
+    // каждые 30 сек отмечаем online/stale по last_seen
+    @Scheduled(fixedDelayString = "PT30S", initialDelayString = "PT10S")
     public void refresh() {
         jdbc.update("""
-            UPDATE inventory.devices d
+            UPDATE inventory.gateways g
                SET state = CASE
-                   WHEN now() - d.last_seen <= make_interval(secs => ?) THEN 'online'
+                   WHEN now() - g.last_seen <= make_interval(secs => ?) THEN 'online'
                    ELSE 'stale'
                END
             """, onlineThresholdSeconds);

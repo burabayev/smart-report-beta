@@ -56,5 +56,24 @@ CREATE TABLE IF NOT EXISTS inventory.devices (
 );
 
 CREATE INDEX IF NOT EXISTS idx_devices_last_seen ON inventory.devices(last_seen DESC);
-CREATE INDEX IF NOT EXISTS idx_devices_state    ON inventory.devices(state);
-CREATE INDEX IF NOT EXISTS idx_devices_model    ON inventory.devices(model);
+CREATE INDEX IF NOT EXISTS idx_devices_state ON inventory.devices(state);
+CREATE INDEX IF NOT EXISTS idx_devices_model ON inventory.devices(model);
+CREATE INDEX IF NOT EXISTS ix_devices_last_seen ON inventory.devices(last_seen);
+
+ALTER TABLE inventory.gateways
+    ADD COLUMN IF NOT EXISTS state text;
+
+-- индексы на запросы по "живости"
+CREATE INDEX IF NOT EXISTS ix_gateways_state ON inventory.gateways(state);
+CREATE INDEX IF NOT EXISTS ix_gateways_last_seen ON inventory.gateways(last_seen);
+
+-- для сортировок/фильтров по свежести
+CREATE INDEX IF NOT EXISTS idx_gateways_last_seen ON inventory.gateways (last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_devices_last_seen  ON inventory.devices  (last_seen DESC);
+
+-- если ещё нет индекса по state (для агрегатов/фильтров)
+CREATE INDEX IF NOT EXISTS idx_gateways_state ON inventory.gateways (state);
+CREATE INDEX IF NOT EXISTS idx_devices_state  ON inventory.devices  (state);
+
+
+

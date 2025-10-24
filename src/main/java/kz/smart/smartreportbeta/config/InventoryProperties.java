@@ -11,7 +11,7 @@ public class InventoryProperties {
      * Сколько секунд считать устройство «онлайн» после последнего события.
      * По умолчанию 10 минут.
      */
-    private int onlineThresholdSeconds = 600;
+    private int onlineThresholdSeconds = 180;
 
     public int getOnlineThresholdSeconds() {
         return onlineThresholdSeconds;
